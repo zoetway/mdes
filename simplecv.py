@@ -7,7 +7,6 @@ import requests
 cam = Camera()
 
 url = "https://api.projectoxford.ai/emotion/v1.0/recognize"
-key = "223b5e0b1a5843188b55e2e744798b4a"
 maxNumberRetries = 10
 
 def processRequest(json, data, headers):
@@ -45,8 +44,7 @@ def processRequest(json, data, headers):
 ##            img.save("/home/pi/Pictures/face.jpeg")
 #            face.draw() #draws green face indicator
 #    img.show() #draws camera image
-print'done'
-
+key = raw_input('Enter EmotionAPI key: ')
 pathToFileOnDisk = '/home/pi/Pictures/face.jpeg'
 with open(pathToFileOnDisk, 'rb') as f:
     data=f.read()
