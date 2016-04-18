@@ -1,13 +1,18 @@
 ## edit /boot/config.txt to add framebuffer_depth=24 to render image with SimpleCV correctly
 
 from SimpleCV import Camera
-
 import requests
+import datetime
 
 cam = Camera()
-
+headers = dict()
+headers['Ocp-Apim-Subscription-Key']= 'empty'
+headers['Content-Type']='application/octet-stream'
 url = "https://api.projectoxford.ai/emotion/v1.0/recognize"
 maxNumberRetries = 10
+json = None
+imagePath = '/home/pi/Pictures/'
+pathToKeyFile = '/home/pi/keys.txt'
 
 def processRequest(json, data, headers):
     retries = 0
@@ -32,31 +37,25 @@ def processRequest(json, data, headers):
         break
     return result
 
-##while True:
-##    print("Searching for faces...")
-##    
-##    img = cam.getImage()
-##    faces = img.findHaarFeatures('/home/pi/PythonProjects/haarcascade_frontalface_alt.xml');                           
-##
-##    if faces:
-##        for face in faces:
-##            print("Found your face!")
-##            img.save("/home/pi/Pictures/face.jpeg")
-#            face.draw() #draws green face indicator
-#    img.show() #draws camera image
-key = raw_input('Enter EmotionAPI key: ')
-pathToFileOnDisk = '/home/pi/Pictures/face.jpeg'
-with open(pathToFileOnDisk, 'rb') as f:
-    data=f.read()
+file = open(pathToKeyFile, 'r')
+headers['Ocp-Apim-Subscription-Key']=file.readline()
 
-headers = dict()
-headers['Ocp-Apim-Subscription-Key']=key
-headers['Content-Type']='application/octet-stream'
+while True:
+    print("Searching for faces...")
+    
+    img = cam.getImage()
+    faces = img.findHaarFeatures('/home/pi/PythonProjects/haarcascade_frontalface_alt.xml')                           
 
-json = None
+    if faces:
+        for face in faces:
+            print("Found your face!")
 
-result = processRequest(json, data, headers)
+            d = datetime.datetime.now()
+            fileName = d.strftime('%d-%m-%Y_%H:%M:%S')
+            imageSavePath = imagePath + fileName + '.jpeg'
+            img.save(imageSavePath)
 
-##for currFace in result:
-##    print'face found'
-print(result)
+            with open(imageSavePath, 'rb') as f:
+                data=f.read()
+                result = processRequest(json, data, headers)
+                print(result)
