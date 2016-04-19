@@ -1,7 +1,6 @@
 ## edit /boot/config.txt to add framebuffer_depth=24 to render image with SimpleCV correctly
 
 from SimpleCV import Camera
-from Tkinter import *
 import operator
 import requests
 import datetime
