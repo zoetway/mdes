@@ -2,6 +2,7 @@
 
 from SimpleCV import Camera
 from Tkinter import *
+import operator
 import requests
 import datetime
 
@@ -59,4 +60,8 @@ while True:
             with open(imageSavePath, 'rb') as f:
                 data=f.read()
                 result = processRequest(json, data, headers)
+
+                for currentFace in result:
+                    currentEmotion = max(currentFace['scores'].iteritems(), key=operator.itemgetter(1))[0]
                 print(result)
+                print('Microsoft thinks your current emotion is: ' + currentEmotion)
